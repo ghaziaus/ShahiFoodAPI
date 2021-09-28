@@ -18,6 +18,7 @@ namespace FoodApi.Controllers
     [ApiController]
     public class AccountsController : ControllerBase
     {
+        //Random Change
         private IConfiguration _configuration;
         private readonly AuthService _auth;
         private FoodDbContext _dbContext;
