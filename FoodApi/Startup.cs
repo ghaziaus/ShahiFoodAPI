@@ -1,21 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FoodApi.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using System;
+using System.Text;
 
 namespace FoodApi
 {
@@ -30,7 +26,15 @@ namespace FoodApi
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
+        {           
+            var builder = new SqlConnectionStringBuilder();
+            builder.ConnectionString =
+            Configuration.GetConnectionString("ShahiFoodApiConn");
+            builder.UserID = Configuration["UserID"];
+            builder.Password = Configuration["Password"];
+            builder.InitialCatalog = Configuration["Initial Catalog"];
+            builder.DataSource = Configuration["Data Source"];
+
             services.AddControllers();
             services.AddMvc(option => option.EnableEndpointRouting = false)
            .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
@@ -51,7 +55,7 @@ namespace FoodApi
                        ClockSkew = TimeSpan.Zero,
                    };
                });
-            services.AddDbContext<FoodDbContext>(option => option.UseSqlServer(Configuration.GetConnectionString("ShahiFoodApiConn")));
+            services.AddDbContext<FoodDbContext>(option => option.UseSqlServer(builder.ConnectionString));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
